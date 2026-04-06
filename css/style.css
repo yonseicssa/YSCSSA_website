@@ -77,6 +77,9 @@ body {
     flex-direction: column;
     cursor: pointer;
     gap: 6px;
+    background: transparent;
+    border: none;
+    padding: 0;
 }
 
 .hamburger span {
@@ -404,6 +407,30 @@ body {
 .activity-content p {
     color: #666;
     line-height: 1.6;
+}
+
+.activity-filters {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+    flex-wrap: wrap;
+}
+
+.activity-filter-button {
+    padding: 0.8rem 1.5rem;
+    background: white;
+    color: #003875;
+    border: 2px solid #003875;
+    border-radius: 25px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.3s;
+}
+
+.activity-filter-button.active {
+    background: #003875;
+    color: white;
 }
 
 /* Footer */

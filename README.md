@@ -1,26 +1,31 @@
 # YSCSSA_website
 YSCSSA_website
 
-## 打开方式：
-```bash
-python -m http.server 8000
-```
-其中8000改为空余的端口
-然后浏览器运行 http://localhost:8000/index.html
+## React 开发方式
+先安装依赖：
 
-## 注意事项：
-测试后要是网站一直能开启可以检查端口运行情况，例如用8000作为端口时：
 ```bash
-netstat -ano | findstr ":8000"
+npm install
 ```
-会出现类似这样的结果
+
+启动开发服务器：
+
 ```bash
-TCP    [::]:8000              [::]:0                 LISTENING       27820
+npm run dev
 ```
-然后可以用这个命令删除进程，其中27820为上一个检查端口结果最后一个变量
+
+然后浏览器打开命令行提示的本地地址（默认通常是 http://localhost:5173）
+
+## 生产构建
+
 ```bash
-taskkill /PID 27820 /F
+npm run build
+npm run preview
 ```
+
+`npm run build` 会在 `dist` 目录生成静态文件，`npm run preview` 用于本地预览生产版本。
+
+
 
 ## ToDo:
 ### footer处 调整联系我们
