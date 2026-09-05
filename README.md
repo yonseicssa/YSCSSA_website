@@ -144,6 +144,14 @@ export default function Page() {
 构建命令 `npm run build`，**输出目录 `out`**（不是 `dist`，那是旧版 Vite 站点的目录）。
 仓库里的 `vercel.json` 已经把这两项固定住了，Vercel 会以它为准，面板里的旧设置不用管。
 
+> **不要在 `vercel.json` 里加 SPA 重写规则**（`{"source": "/(.*)", "destination": "/index.html"}`）。
+> 那是旧版 React SPA 需要的：单页应用只有一个 HTML，所有路径都得回落到它。
+> 本站是静态多页，每个页面都有自己的 HTML，加了这条规则会导致**所有网址都显示首页**。
+>
+> 万一这个文件不被接受，退路是删掉它，改在 Vercel 项目设置里手动配：
+> Framework Preset 选 **Next.js**，Output Directory 覆盖为 **out**（默认残留的 `dist`
+> 是旧版 Vite 站点的目录）。
+
 可选平台：
 
 - **Cloudflare Pages**（推荐：中国大陆访问相对稳定，且与 Cloudflare Web Analytics 同平台）
