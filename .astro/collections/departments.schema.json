@@ -1,0 +1,95 @@
+{
+  "$ref": "#/definitions/departments",
+  "definitions": {
+    "departments": {
+      "type": "object",
+      "properties": {
+        "order": {
+          "type": "number",
+          "default": 99
+        },
+        "name": {
+          "type": "object",
+          "properties": {
+            "zh": {
+              "type": "string"
+            },
+            "ko": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "zh",
+            "ko"
+          ],
+          "additionalProperties": false
+        },
+        "description": {
+          "type": "object",
+          "properties": {
+            "zh": {
+              "type": "string"
+            },
+            "ko": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "zh",
+            "ko"
+          ],
+          "additionalProperties": false
+        },
+        "members": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "role": {
+                "type": "object",
+                "properties": {
+                  "zh": {
+                    "type": "string"
+                  },
+                  "ko": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "zh",
+                  "ko"
+                ],
+                "additionalProperties": false
+              },
+              "photo": {
+                "type": "string"
+              },
+              "consent": {
+                "type": "boolean",
+                "default": false
+              }
+            },
+            "required": [
+              "name",
+              "role"
+            ],
+            "additionalProperties": false
+          },
+          "default": []
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "description"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

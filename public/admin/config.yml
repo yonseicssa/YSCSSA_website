@@ -1,0 +1,181 @@
+# YSCSSA 内容后台配置
+# 后台地址：https://<域名>/admin/
+# 登录方式：GitHub 账号（每人一个独立账号，PRD 5.1）
+#
+# 上线前需要改的地方：
+#   1. backend.repo 改成仓库的 owner/name
+#   2. 若托管在 Cloudflare Pages/自建，需要配置 GitHub OAuth 代理并填写 base_url
+#      （Netlify 用自带的 Git Gateway 时另见 README）
+
+backend:
+  name: github
+  repo: yonseicssa/YSCSSA_website
+  branch: main
+  # base_url: https://<oauth-proxy-domain>
+  commit_messages:
+    create: '内容：新增 {{collection}} “{{slug}}”'
+    update: '内容：修改 {{collection}} “{{slug}}”'
+    delete: '内容：删除 {{collection}} “{{slug}}”'
+    uploadMedia: '内容：上传图片 {{path}}'
+    deleteMedia: '内容：删除图片 {{path}}'
+
+# 开启后所有改动先进 Pull Request，配合分支保护可实现「编辑改文案需管理员审核」
+# publish_mode: editorial_workflow
+
+media_folder: public/images
+public_folder: /images
+
+locale: zh_Hans
+
+collections:
+  # ---------------- 活动（PRD 4.3） ----------------
+  - name: events
+    label: 活动
+    label_singular: 活动
+    folder: src/content/events
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    media_folder: /public/images/events
+    public_folder: /images/events
+    summary: '{{startDate | date("YYYY-MM-DD")}} · {{title}}'
+    sortable_fields: [startDate, title]
+    fields:
+      - { name: title, label: 标题, widget: string, hint: 建议 20 字以内 }
+      - { name: startDate, label: 开始日期, widget: datetime, date_format: 'YYYY-MM-DD', time_format: false, picker_utc: false }
+      - {
+          name: endDate,
+          label: 结束日期,
+          widget: datetime,
+          required: false,
+          date_format: 'YYYY-MM-DD',
+          time_format: false,
+          picker_utc: false,
+          hint: 跨天活动才需要填写；留空视为单日活动
+        }
+      - { name: location, label: 地点, widget: string }
+      - { name: cover, label: 封面图, widget: image, hint: '16:9，压缩为 WebP，长边 1600px' }
+      - { name: coverAlt, label: 封面图说明文字, widget: string, hint: 供读屏软件与搜索引擎使用，必填 }
+      - { name: pinned, label: 置顶, widget: boolean, default: false, required: false, hint: 最多同时置顶 3 条，超出的自动失效 }
+      - { name: pinnedAt, label: 置顶时间, widget: datetime, required: false, hint: 置顶超过 3 条时按此时间取最近的 3 条 }
+      - name: gallery
+        label: 图集
+        widget: list
+        required: false
+        summary: '{{fields.alt}}'
+        fields:
+          - { name: src, label: 图片, widget: image }
+          - { name: alt, label: 图片说明文字, widget: string }
+      - { name: body, label: 正文, widget: markdown }
+
+  # ---------------- 新生指南（PRD 4.4） ----------------
+  - name: guides
+    label: 新生指南
+    label_singular: 指南
+    folder: src/content/guides
+    create: true
+    slug: '{{fields.slug}}'
+    media_folder: /public/images/guides
+    public_folder: /images/guides
+    sortable_fields: [weight, title]
+    fields:
+      - { name: title, label: 标题, widget: string }
+      - {
+          name: slug,
+          label: URL 短名,
+          widget: string,
+          pattern: ['^[a-z0-9]+(-[a-z0-9]+)*$', '只能使用小写英文、数字与连字符，例如 arc-application'],
+          hint: 发布后不得修改；修改会导致外部引用失效
+        }
+      - { name: summary, label: 摘要, widget: text, hint: 60 字以内，用于列表页与搜索结果 }
+      - { name: weight, label: 排序权重, widget: number, required: false, value_type: int, hint: 数字越小越靠前；留空排在最后 }
+      - {
+          name: updated,
+          label: 最后更新,
+          widget: datetime,
+          default: '{{now}}',
+          hint: 网站优先显示 Git 提交时间，此处仅作备用，通常无需改动
+        }
+      - { name: body, label: 正文, widget: markdown }
+
+  # ---------------- 页面文案（中韩各一份） ----------------
+  - name: pages
+    label: 页面文案
+    files:
+      - name: home_zh
+        label: 首页简介（中文）
+        file: src/content/pages/zh/home.md
+        fields: &page_fields
+          - { name: lang, label: 语言, widget: hidden }
+          - { name: seoTitle, label: 浏览器标题（SEO）, widget: string }
+          - { name: seoDescription, label: 页面描述（SEO）, widget: text }
+          - { name: heading, label: 标题, widget: string }
+          - { name: subheading, label: 副标题, widget: string, required: false }
+          - { name: body, label: 正文, widget: markdown }
+      - { name: home_ko, label: 首页简介（韩语）, file: src/content/pages/ko/home.md, fields: *page_fields }
+      - { name: about_zh, label: 关于我们（中文）, file: src/content/pages/zh/about.md, fields: *page_fields }
+      - { name: about_ko, label: 关于我们（韩语）, file: src/content/pages/ko/about.md, fields: *page_fields }
+      - { name: partnership_zh, label: 合作与赞助（中文）, file: src/content/pages/zh/partnership.md, fields: *page_fields }
+      - { name: partnership_ko, label: 合作与赞助（韩语）, file: src/content/pages/ko/partnership.md, fields: *page_fields }
+
+  # ---------------- 组织架构（PRD 4.2） ----------------
+  - name: departments
+    label: 组织架构
+    label_singular: 部门
+    folder: src/content/departments
+    create: true
+    media_folder: /public/images/members
+    public_folder: /images/members
+    summary: '{{order}} · {{name.zh}}'
+    sortable_fields: [order]
+    fields:
+      - { name: order, label: 排序, widget: number, value_type: int, default: 99 }
+      - name: name
+        label: 部门名称
+        widget: object
+        fields:
+          - { name: zh, label: 中文, widget: string }
+          - { name: ko, label: 韩语, widget: string }
+      - name: description
+        label: 职能描述
+        widget: object
+        fields:
+          - { name: zh, label: 中文, widget: text }
+          - { name: ko, label: 韩语, widget: text }
+      - name: members
+        label: 成员
+        widget: list
+        required: false
+        summary: '{{fields.name}}（{{fields.role.zh}}）'
+        fields:
+          - { name: name, label: 姓名, widget: string, hint: 中文原文，不作转写 }
+          - name: role
+            label: 职位
+            widget: object
+            fields:
+              - { name: zh, label: 中文, widget: string }
+              - { name: ko, label: 韩语, widget: string }
+          - { name: photo, label: 照片, widget: image, required: false, hint: '正方形 800×800，WebP，不超过 80KB' }
+          - {
+              name: consent,
+              label: 已取得本人同意,
+              widget: boolean,
+              default: false,
+              hint: 未勾选的成员不会显示在网站上。取得同意的聊天记录须截图存档。
+            }
+      - { name: body, label: 备注, widget: markdown, required: false }
+
+  # ---------------- 全站设置 ----------------
+  - name: settings
+    label: 全站设置
+    files:
+      - name: site
+        label: 壁纸与平台入口
+        file: src/content/settings/site.json
+        fields:
+          - { name: email, label: 公共邮箱, widget: string }
+          - { name: wallpaper, label: 首页壁纸, widget: image, hint: 上传学联自行拍摄或已获授权的照片 }
+          - { name: wallpaperAlt, label: 壁纸说明文字, widget: string }
+          - { name: xiaohongshu, label: 小红书主页链接, widget: string }
+          - { name: instagram, label: Instagram 主页链接, widget: string }
+          - { name: wechatQr, label: 微信公众号二维码, widget: image }
+          - { name: wechatName, label: 微信公众号名称, widget: string }
