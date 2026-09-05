@@ -1,0 +1,38 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { effectiveUpdated, updatedLabel } from '../../lib/guides';
+import { localePath, t, type Lang } from '../../i18n/ui';
+import Icon from '../Icon.astro';
+
+interface Props {
+  lang: Lang;
+  guide: CollectionEntry<'guides'>;
+}
+
+const { lang, guide } = Astro.props;
+const { Content } = await render(guide);
+---
+
+<Base
+  lang={lang}
+  path={`/guide/${guide.data.slug}`}
+  title={`${guide.data.title} - ${t(lang, 'guide.title')}`}
+  description={guide.data.summary}
+>
+  <article class="container section detail">
+    <h1>{guide.data.title}</h1>
+    <p class="guide-updated">
+      {t(lang, 'guide.updated')}：{updatedLabel(effectiveUpdated(guide), lang)}
+    </p>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    <a class="link-arrow detail-back" href={localePath(lang, '/guide')}>
+      <Icon name="arrow-back" />
+      {t(lang, 'guide.back')}
+    </a>
+  </article>
+</Base>

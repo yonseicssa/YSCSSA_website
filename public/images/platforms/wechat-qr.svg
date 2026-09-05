@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" width="480" height="480" role="img">
+  <rect width="480" height="480" fill="#ffffff"/>
+  <rect x="20" y="20" width="440" height="440" fill="none" stroke="#c3c6d2" stroke-width="4" stroke-dasharray="12 10"/>
+  <text x="240" y="230" text-anchor="middle" font-family="Inter, PingFang SC, sans-serif" font-size="28" fill="#434750">微信公众号二维码</text>
+  <text x="240" y="275" text-anchor="middle" font-family="Inter, PingFang SC, sans-serif" font-size="22" fill="#737781">请在后台替换为实际二维码</text>
+</svg>

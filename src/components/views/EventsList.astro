@@ -1,0 +1,99 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import EventCard from '../EventCard.astro';
+import { buildSlugMap, orderedEvents, pinnedEvents, statusOf } from '../../lib/events';
+import { localePath, t, type Lang } from '../../i18n/ui';
+import PageHeader from '../PageHeader.astro';
+
+interface Props {
+  lang: Lang;
+  pageNum: number;
+}
+
+export const PER_PAGE = 12;
+
+const { lang, pageNum } = Astro.props;
+
+const all = await getCollection('events');
+const slugs = buildSlugMap(all);
+const ordered = orderedEvents(all);
+const totalPages = Math.max(1, Math.ceil(ordered.length / PER_PAGE));
+const current = ordered.slice((pageNum - 1) * PER_PAGE, pageNum * PER_PAGE);
+
+const pinnedIds = new Set(pinnedEvents(all).map((e) => e.id));
+const path = pageNum === 1 ? '/events' : `/events/page/${pageNum}`;
+const title = `${t(lang, 'events.title')}${pageNum > 1 ? ` · ${t(lang, 'events.page', { n: pageNum })}` : ''} - ${t(lang, 'site.fullName')}`;
+---
+
+<Base lang={lang} path={path} title={title} description={t(lang, 'site.description')}>
+  <PageHeader title={t(lang, 'events.title')} />
+
+  <section class="container section">
+    {
+      current.length === 0 ? (
+        <p class="empty-state">{t(lang, 'events.empty')}</p>
+      ) : (
+        <div class="activities-grid activities-grid-3" data-events-list>
+          {current.map((event) => (
+            <div
+              class="event-slot"
+              data-event-slot
+              data-pinned={pinnedIds.has(event.id) ? 'true' : 'false'}
+              data-start={event.data.startDate.toISOString()}
+              data-initial-status={statusOf(event)}
+            >
+              <EventCard event={event} slug={slugs.get(event.id)!} lang={lang} />
+            </div>
+          ))}
+        </div>
+      )
+    }
+
+    {
+      totalPages > 1 && (
+        <nav class="pagination" aria-label={t(lang, 'events.title')}>
+          {pageNum > 1 && (
+            <a
+              class="cta-button cta-button-outline"
+              href={localePath(lang, pageNum === 2 ? '/events' : `/events/page/${pageNum - 1}`)}
+            >
+              {t(lang, 'events.prev')}
+            </a>
+          )}
+          <span class="pagination-status">{pageNum} / {totalPages}</span>
+          {pageNum < totalPages && (
+            <a class="cta-button cta-button-outline" href={localePath(lang, `/events/page/${pageNum + 1}`)}>
+              {t(lang, 'events.next')}
+            </a>
+          )}
+        </nav>
+      )
+    }
+  </section>
+</Base>
+
+<script>
+  /**
+   * 分组与排序同样按浏览器当前时间重排，保证长时间未重新部署时列表顺序依然正确：
+   * 置顶在最前（不参与分组）→ 即将举行按开始日期升序 → 已结束按开始日期降序。
+   */
+  const list = document.querySelector<HTMLElement>('[data-events-list]');
+  if (list) {
+    const slots = Array.from(list.querySelectorAll<HTMLElement>('[data-event-slot]'));
+    const rank = (el: HTMLElement) => {
+      if (el.dataset.pinned === 'true') return 0;
+      return el.querySelector<HTMLElement>('[data-event-card]')?.dataset.status === 'upcoming' ? 1 : 2;
+    };
+    slots
+      .sort((a, b) => {
+        const ra = rank(a);
+        const rb = rank(b);
+        if (ra !== rb) return ra - rb;
+        const ta = Date.parse(a.dataset.start ?? '');
+        const tb = Date.parse(b.dataset.start ?? '');
+        return ra === 2 ? tb - ta : ta - tb;
+      })
+      .forEach((slot) => list.appendChild(slot));
+  }
+</script>

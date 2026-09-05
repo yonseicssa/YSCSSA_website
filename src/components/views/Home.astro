@@ -1,0 +1,95 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import EventCard from '../EventCard.astro';
+import PlatformLinks from '../PlatformLinks.astro';
+import { buildSlugMap, homeEvents } from '../../lib/events';
+import { imageUrl } from '../../lib/images';
+import { localePath, t, type Lang } from '../../i18n/ui';
+import { settings } from '../../lib/settings';
+import Icon from '../Icon.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+const page = (await getEntry('pages', `${lang}/home`))!;
+const { Content } = await render(page);
+
+const allEvents = await getCollection('events');
+const slugs = buildSlugMap(allEvents);
+const recent = homeEvents(allEvents);
+---
+
+<Base lang={lang} path="/" title={page.data.seoTitle} description={page.data.seoDescription}>
+  <!-- 学联简介 -->
+  <section class="hero-wrap">
+    <div class="hero hero-intro">
+      <div class="hero-content">
+        <p class="eyebrow"><span class="dot"></span>{page.data.subheading}</p>
+        <h1>{page.data.heading}</h1>
+        <div class="prose lead"><Content /></div>
+        <div class="hero-actions">
+          <a class="cta-button" href={localePath(lang, '/about')}>
+            {t(lang, 'nav.about')}
+            <Icon name="arrow-forward" />
+          </a>
+          <a class="cta-button cta-button-outline" href={localePath(lang, '/guide')}>{t(lang, 'nav.guide')}</a>
+        </div>
+      </div>
+
+      <aside class="brand-card" aria-hidden="true">
+        <span class="brand-mark">
+          <img src="/images/logo.svg" alt="" width="56" height="56" />
+        </span>
+        <p class="brand-abbr">YSCSSA</p>
+        <p class="brand-name">{t(lang, 'site.fullName')}</p>
+        <p class="brand-en">Yonsei Chinese Students and Scholars Association</p>
+        <p class="brand-foot">
+          <Icon name="location" size={16} />
+          Yonsei University · Seoul
+        </p>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 壁纸：全宽静态图片，无轮播、无文字叠加（PRD 4.1） -->
+  <section class="wallpaper">
+    <img
+      src={imageUrl(settings.wallpaper)}
+      alt={settings.wallpaperAlt}
+      width="2400"
+      height="1000"
+      fetchpriority="high"
+    />
+  </section>
+
+  <!-- 近期活动：一条都没有时整个区块隐藏（PRD 4.1） -->
+  {
+    recent.length > 0 && (
+      <section class="section" aria-labelledby="recent-events">
+        <div class="container">
+          <div class="section-head">
+            <h2 class="section-title" id="recent-events">
+              {t(lang, 'home.recentEvents')}
+            </h2>
+            <a class="link-arrow" href={localePath(lang, '/events')}>
+              {t(lang, 'home.viewAllEvents')}
+              <Icon name="arrow-forward" />
+            </a>
+          </div>
+
+          <div class="activities-grid activities-grid-3">
+            {recent.map((event, index) => (
+              <EventCard event={event} slug={slugs.get(event.id)!} lang={lang} eager={index === 0} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  <PlatformLinks lang={lang} />
+</Base>

@@ -1,0 +1,15 @@
+---
+import { getCollection } from 'astro:content';
+import GuideDetail from '../../../components/views/GuideDetail.astro';
+
+export async function getStaticPaths() {
+  const guides = await getCollection('guides');
+  return guides.map((guide) => ({
+    params: { slug: guide.data.slug },
+    props: { guide }
+  }));
+}
+
+const { guide } = Astro.props;
+---
+<GuideDetail lang="ko" guide={guide} />

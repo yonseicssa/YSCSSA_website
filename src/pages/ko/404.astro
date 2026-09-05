@@ -1,0 +1,15 @@
+---
+import Base from '../../layouts/Base.astro';
+import { t } from '../../i18n/ui';
+---
+
+<Base lang="ko" path="/404" title={t('ko', 'notFound.title')} description={t('ko', 'notFound.body')} noindex bare>
+  <section class="notfound">
+    <div class="container">
+      <p class="notfound-code">404</p>
+      <h1>{t('ko', 'notFound.title')}</h1>
+      <p class="lead">{t('ko', 'notFound.body')}</p>
+      <a class="cta-button" href="/ko">{t('ko', 'notFound.home')}</a>
+    </div>
+  </section>
+</Base>

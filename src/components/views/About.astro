@@ -1,0 +1,92 @@
+---
+import { getCollection, getEntry, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { imageUrl } from '../../lib/images';
+import { t, type Lang } from '../../i18n/ui';
+import { settings } from '../../lib/settings';
+import Icon from '../Icon.astro';
+import PageHeader from '../PageHeader.astro';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+
+const page = (await getEntry('pages', `${lang}/about`))!;
+const { Content } = await render(page);
+
+const departments = (await getCollection('departments')).sort((a, b) => a.data.order - b.data.order);
+---
+
+<Base lang={lang} path="/about" title={page.data.seoTitle} description={page.data.seoDescription}>
+  <PageHeader title={page.data.heading} subtitle={page.data.subheading} />
+
+  <section class="container section">
+    <div class="prose">
+      <Content />
+    </div>
+  </section>
+
+  <!-- 组织架构（PRD 4.2） -->
+  <section class="section section-alt" aria-labelledby="org-title">
+    <div class="container">
+      <h2 class="section-title" id="org-title">{t(lang, 'about.org')}</h2>
+
+      <div class="departments-grid">
+        {
+          departments.map((department) => (
+            <article class="department-card">
+              <h3>{department.data.name[lang]}</h3>
+              <p class="department-summary">{department.data.description[lang]}</p>
+
+              {department.data.members.filter((member) => member.consent).length > 0 && (
+                <ul class="member-list">
+                  {department.data.members
+                    // 未取得本人同意的成员不展示（PRD 4.2）
+                    .filter((member) => member.consent)
+                    .map((member) => (
+                      <li class="member-card">
+                        <span class="member-photo">
+                          {member.photo ? (
+                            <img src={imageUrl(member.photo)} alt={member.name} width="800" height="800" loading="lazy" />
+                          ) : (
+                            <Icon name="person" size={28} />
+                          )}
+                        </span>
+                        <span class="member-name">{member.name}</span>
+                        <span class="member-role">{member.role[lang]}</span>
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </article>
+          ))
+        }
+      </div>
+
+      <p class="notice">{t(lang, 'about.removalNotice')}</p>
+    </div>
+  </section>
+
+  <!-- 联系方式 -->
+  <section class="container section" aria-labelledby="contact-title">
+    <h2 class="section-title" id="contact-title">{t(lang, 'about.contact')}</h2>
+    <div class="contact-card">
+      <div class="contact-list">
+        <div>
+          <Icon name="mail" />
+          <span>{t(lang, 'about.email')}：<a href={`mailto:${settings.email}`}>{settings.email}</a></span>
+        </div>
+        <div>
+          <Icon name="chat" />
+          <span>{lang === 'zh' ? '微信公众号' : '위챗 공식계정'}：{settings.wechatName}</span>
+        </div>
+        <div>
+          <Icon name="location" />
+          <span>Yonsei University, Seoul, South Korea</span>
+        </div>
+      </div>
+    </div>
+  </section>
+</Base>

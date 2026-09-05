@@ -1,0 +1,103 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { formatDateRange } from '../../lib/date';
+import { effectiveEnd, statusOf } from '../../lib/events';
+import { imageUrl } from '../../lib/images';
+import { localePath, t, type Lang } from '../../i18n/ui';
+import Icon from '../Icon.astro';
+
+interface Props {
+  lang: Lang;
+  event: CollectionEntry<'events'>;
+  slug: string;
+}
+
+const { lang, event, slug } = Astro.props;
+const { Content } = await render(event);
+const { title, startDate, endDate, location, cover, coverAlt, gallery } = event.data;
+const initialStatus = statusOf(event);
+---
+
+<Base
+  lang={lang}
+  path={`/events/${slug}`}
+  title={`${title} - ${t(lang, 'site.fullName')}`}
+  description={`${title}｜${formatDateRange(startDate, endDate, lang)}｜${location}`}
+>
+  <article class="container section detail">
+    <figure class="detail-cover">
+      <img src={imageUrl(cover)} alt={coverAlt} width="1600" height="900" fetchpriority="high" />
+    </figure>
+
+    <h1>{title}</h1>
+
+    <div class="activity-meta detail-meta">
+      <span>
+        <Icon name="calendar" />
+        <time datetime={startDate.toISOString()}>{formatDateRange(startDate, endDate, lang)}</time>
+      </span>
+      <span>
+        <Icon name="location" />
+        {location}
+      </span>
+      <span
+        class={`event-status status-${initialStatus}`}
+        data-event-end={effectiveEnd(event).toISOString()}
+        data-label-upcoming={t(lang, 'events.upcoming')}
+        data-label-ended={t(lang, 'events.ended')}
+      >
+        {t(lang, initialStatus === 'upcoming' ? 'events.upcoming' : 'events.ended')}
+      </span>
+    </div>
+
+    <div class="prose">
+      <Content />
+    </div>
+
+    {
+      gallery.length > 0 && (
+        <section class="detail-gallery" aria-labelledby="gallery-title">
+          <h2 class="section-title" id="gallery-title">
+            {t(lang, 'events.gallery')}
+          </h2>
+          <div class="gallery-grid">
+            {gallery.map((image) => (
+              <button type="button" class="gallery-thumb" data-gallery-src={imageUrl(image.src)} data-gallery-alt={image.alt}>
+                <img src={imageUrl(image.src)} alt={image.alt} loading="lazy" width="800" height="600" />
+              </button>
+            ))}
+          </div>
+        </section>
+      )
+    }
+
+    <a class="link-arrow detail-back" href={localePath(lang, '/events')}>
+      <Icon name="arrow-back" />
+      {t(lang, 'events.back')}
+    </a>
+  </article>
+
+  <dialog class="qr-dialog" data-gallery-dialog>
+    <img data-gallery-image src="" alt="" />
+    <form method="dialog">
+      <button class="cta-button cta-button-outline" type="submit">{lang === 'zh' ? '关闭' : '닫기'}</button>
+    </form>
+  </dialog>
+</Base>
+
+<script>
+  const dialog = document.querySelector<HTMLDialogElement>('[data-gallery-dialog]');
+  const image = document.querySelector<HTMLImageElement>('[data-gallery-image]');
+  document.querySelectorAll<HTMLButtonElement>('[data-gallery-src]').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (!dialog || !image) return;
+      image.src = button.dataset.gallerySrc ?? '';
+      image.alt = button.dataset.galleryAlt ?? '';
+      dialog.showModal();
+    });
+  });
+  dialog?.addEventListener('click', (event) => {
+    if (event.target === dialog) dialog.close();
+  });
+</script>

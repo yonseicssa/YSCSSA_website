@@ -1,0 +1,6 @@
+# 上线前确认此文件没有屏蔽设置（PRD 7.3 / 验收项）
+User-agent: *
+Allow: /
+Disallow: /admin/
+
+Sitemap: https://yscssa.org/sitemap-index.xml

@@ -1,0 +1,94 @@
+---
+import '../styles/global.css';
+import Nav from '../components/Nav.astro';
+import Footer from '../components/Footer.astro';
+import { htmlLang, localePath, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  /** 不含语言前缀的路径，如 /about、/events/2026-11-15 */
+  path: string;
+  title: string;
+  description: string;
+  noindex?: boolean;
+  /** 404 页面不显示导航与页脚（其语言由访问路径决定，与外壳语言可能不一致） */
+  bare?: boolean;
+}
+
+const { lang, path, title, description, noindex = false, bare = false } = Astro.props;
+
+const site = Astro.site ?? new URL('https://yscssa.org');
+const canonical = new URL(localePath(lang, path), site).href;
+const zhHref = new URL(localePath('zh', path), site).href;
+const koHref = new URL(localePath('ko', path), site).href;
+
+// Cloudflare Web Analytics（PRD 7.5）：在托管平台设置 PUBLIC_CF_BEACON_TOKEN 后自动生效
+const beaconToken = import.meta.env.PUBLIC_CF_BEACON_TOKEN;
+---
+
+<!doctype html>
+<html lang={htmlLang[lang]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex" />}
+
+    <!-- 中韩两个语言版本互相声明对应关系（PRD 7.3） -->
+    <link rel="alternate" hreflang="zh" href={zhHref} />
+    <link rel="alternate" hreflang="ko" href={koHref} />
+    <link rel="alternate" hreflang="x-default" href={zhHref} />
+
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={lang === 'zh' ? 'zh_CN' : 'ko_KR'} />
+
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700&display=swap"
+    />
+    {
+      beaconToken && (
+        <script
+          is:inline
+          defer
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          data-cf-beacon={`{"token": "${beaconToken}"}`}
+        />
+      )
+    }
+  </head>
+  <body>
+    <a class="skip-link" href="#main">{lang === 'zh' ? '跳到主要内容' : '본문으로 건너뛰기'}</a>
+    {!bare && <Nav lang={lang} path={path} />}
+    <main id="main">
+      <slot />
+    </main>
+    {!bare && <Footer lang={lang} />}
+
+    <script>
+      /**
+       * 活动状态必须由浏览器在页面打开时实时计算（PRD 4.3）。
+       * 静态站不会自动重新构建，若状态在构建时固化，活动结束后页面会一直显示「即将举行」。
+       */
+      const now = Date.now();
+      document.querySelectorAll<HTMLElement>('[data-event-end]').forEach((el) => {
+        const end = Date.parse(el.dataset.eventEnd ?? '');
+        if (Number.isNaN(end)) return;
+        const ended = end <= now;
+        el.textContent = (ended ? el.dataset.labelEnded : el.dataset.labelUpcoming) ?? el.textContent;
+        el.classList.toggle('status-ended', ended);
+        el.classList.toggle('status-upcoming', !ended);
+        const card = el.closest<HTMLElement>('[data-event-card]');
+        if (card) card.dataset.status = ended ? 'ended' : 'upcoming';
+      });
+    </script>
+  </body>
+</html>

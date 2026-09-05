@@ -1,0 +1,76 @@
+---
+import Icon from './Icon.astro';
+import { localePath, t, type Lang } from '../i18n/ui';
+import { settings } from '../lib/settings';
+
+interface Props {
+  lang: Lang;
+}
+
+const { lang } = Astro.props;
+const year = new Date().getFullYear();
+
+const links = [
+  { key: 'nav.home', href: '/' },
+  { key: 'nav.about', href: '/about' },
+  { key: 'nav.events', href: '/events' },
+  { key: 'nav.guide', href: '/guide' },
+  { key: 'nav.partnership', href: '/partnership' }
+] as const;
+---
+
+<footer>
+  <div class="footer-inner">
+    <div class="footer-brand-col">
+      <div class="footer-brand">
+        <img src="/images/logo.svg" alt="" width="32" height="32" />
+        <span>{t(lang, 'site.fullName')}</span>
+      </div>
+      <p class="footer-note">Yonsei Chinese Students and Scholars Association</p>
+      <a class="footer-mail" href={`mailto:${settings.email}`}>
+        <Icon name="mail" size={18} />
+        {settings.email}
+      </a>
+    </div>
+
+    <nav class="footer-col" aria-labelledby="footer-nav-title">
+      <h2 class="footer-col-title" id="footer-nav-title">{t(lang, 'footer.nav')}</h2>
+      <ul>
+        {
+          links.map((link) => (
+            <li>
+              <a href={localePath(lang, link.href)}>{t(lang, link.key)}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <nav class="footer-col social-links" aria-labelledby="footer-follow-title">
+      <h2 class="footer-col-title" id="footer-follow-title">{t(lang, 'footer.follow')}</h2>
+      <ul>
+        <li>
+          <a href={settings.xiaohongshu} target="_blank" rel="noopener noreferrer">
+            小红书 <Icon name="external" size={14} />
+          </a>
+        </li>
+        <li>
+          <a href={settings.instagram} target="_blank" rel="noopener noreferrer">
+            Instagram <Icon name="external" size={14} />
+          </a>
+        </li>
+        <li>
+          <span class="footer-wechat">
+            {t(lang, 'footer.wechat')}：{settings.wechatName}
+          </span>
+        </li>
+      </ul>
+    </nav>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="footer-bottom-inner">
+      <p>© {year} {t(lang, 'site.fullName')} YSCSSA. {t(lang, 'footer.rights')}</p>
+    </div>
+  </div>
+</footer>
