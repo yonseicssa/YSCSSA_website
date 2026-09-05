@@ -141,10 +141,18 @@ export default function Page() {
 
 ## 部署
 
-任选一个支持 Git 自动构建的平台（构建命令 `npm run build`，**输出目录 `out`**）：
+构建命令 `npm run build`，**输出目录 `out`**（不是 `dist`，那是旧版 Vite 站点的目录）。
+仓库里的 `vercel.json` 已经把这两项固定住了，Vercel 会以它为准，面板里的旧设置不用管。
+
+可选平台：
 
 - **Cloudflare Pages**（推荐：中国大陆访问相对稳定，且与 Cloudflare Web Analytics 同平台）
+- **Vercel**（部署最省事；但 vercel.app 域名在中国大陆通常不可访问，
+  若要满足 PRD 7.2 的大陆访问实测，需要绑定自有域名并实测，或改用 Cloudflare Pages）
 - Netlify（后台 OAuth 配置最省事）
+
+`public/_redirects`（韩语路径的 404 规则）只有 Netlify 与 Cloudflare Pages 会读；
+Vercel 上不生效，但根 404 页面本身会按路径前缀切换语言，所以行为一致。
 
 访问统计：在托管平台加环境变量 `NEXT_PUBLIC_CF_BEACON_TOKEN`，值为 Cloudflare Web Analytics 的
 beacon token，页面会自动带上统计脚本；不设则不加载任何统计代码。
