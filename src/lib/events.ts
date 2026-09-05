@@ -1,6 +1,6 @@
-import type { CollectionEntry } from 'astro:content';
+import type { EventEntry } from './content';
 
-export type EventEntry = CollectionEntry<'events'>;
+export type { EventEntry };
 export type EventStatus = 'upcoming' | 'ended';
 
 const MAX_PINNED = 3;

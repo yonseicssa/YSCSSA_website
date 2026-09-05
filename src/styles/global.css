@@ -41,8 +41,9 @@
     --on-error-container: #93000a;
 
     /* Typography */
-    --font-display: 'Montserrat', 'PingFang SC', 'Microsoft YaHei', sans-serif;
-    --font-body: 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    /* 字体由 next/font 在构建时下载并自托管，变量名见 components/SiteShell.tsx */
+    --font-display: var(--font-montserrat), 'Montserrat', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --font-body: var(--font-inter), 'Inter', 'PingFang SC', 'Microsoft YaHei', sans-serif;
 
     /* Shape */
     --radius-sm: 0.25rem;
@@ -190,7 +191,7 @@ img {
     background: var(--surface-container-low);
     color: var(--on-surface-variant);
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
     white-space: nowrap;
 }
 

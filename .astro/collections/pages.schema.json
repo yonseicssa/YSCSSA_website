@@ -1,0 +1,40 @@
+{
+  "$ref": "#/definitions/pages",
+  "definitions": {
+    "pages": {
+      "type": "object",
+      "properties": {
+        "lang": {
+          "type": "string",
+          "enum": [
+            "zh",
+            "ko"
+          ]
+        },
+        "seoTitle": {
+          "type": "string"
+        },
+        "seoDescription": {
+          "type": "string"
+        },
+        "heading": {
+          "type": "string"
+        },
+        "subheading": {
+          "type": "string"
+        },
+        "$schema": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "lang",
+        "seoTitle",
+        "seoDescription",
+        "heading"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "$schema": "http://json-schema.org/draft-07/schema#"
+}

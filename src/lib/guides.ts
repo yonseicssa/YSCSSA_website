@@ -1,7 +1,7 @@
-import type { CollectionEntry } from 'astro:content';
+import type { GuideEntry } from './content';
 import gitUpdated from '../generated/git-updated.json';
 
-export type GuideEntry = CollectionEntry<'guides'>;
+export type { GuideEntry };
 
 /**
  * 排序权重升序；权重相同或均为空时按最后更新日期降序（PRD 4.4）。
