@@ -703,40 +703,6 @@ img {
     margin: 0;
 }
 
-.contact-card {
-    margin-top: 32px;
-    padding: 24px;
-    background: var(--surface-container-low);
-    border: 1px solid var(--surface-variant);
-    border-radius: var(--radius-xl);
-}
-
-.contact-card h4 {
-    font-family: var(--font-body);
-    font-size: 14px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: var(--primary);
-    margin-bottom: 16px;
-}
-
-.contact-list {
-    display: grid;
-    gap: 8px;
-}
-
-.contact-list div {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    color: var(--on-surface-variant);
-}
-
-.contact-list .icon {
-    color: var(--secondary);
-}
-
 .about-image {
     position: relative;
     min-height: 500px;
@@ -873,6 +839,130 @@ img {
 .department-card .link-arrow {
     margin-top: 24px;
     align-self: flex-start;
+}
+
+/* =========================================================
+   合作与赞助（PRD 4.5）
+   ========================================================= */
+
+.offering-group + .offering-group {
+    margin-top: 48px;
+}
+
+.offering-group-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--primary);
+    margin-bottom: 20px;
+}
+
+.offering-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gutter);
+}
+
+.offering-card {
+    padding: 24px;
+    background: var(--surface-container-lowest);
+    border: 1px solid var(--surface-variant);
+    border-radius: var(--radius-lg);
+}
+
+.offering-card h4 {
+    font-family: var(--font-display);
+    font-size: 18px;
+    color: var(--primary);
+    margin-bottom: 6px;
+}
+
+.offering-card p {
+    color: var(--on-surface-variant);
+    line-height: 1.6;
+}
+
+/* 对外邮箱单独一行居中（PRD 4.5） */
+.contact-email {
+    margin-bottom: 40px;
+    text-align: center;
+    font-family: var(--font-display);
+    font-size: 22px;
+}
+
+.contact-cards {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--gutter);
+}
+
+.contact-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--surface-container-lowest);
+    border: 1px solid var(--surface-variant);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.contact-card-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    background: var(--surface-container-low);
+}
+
+.contact-card-role {
+    padding: 20px 24px 0;
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--primary);
+}
+
+.contact-card-name {
+    margin-left: 8px;
+    font-size: 16px;
+    color: var(--on-surface);
+}
+
+/* 名片图中的文字无法复制，实际联系信息必须以文本形式同时提供（PRD 4.5） */
+.contact-card-details {
+    display: grid;
+    gap: 8px;
+    padding: 12px 24px 24px;
+}
+
+.contact-card-details div {
+    display: flex;
+    gap: 12px;
+}
+
+.contact-card-details dt {
+    flex: none;
+    width: 4.5em;
+    color: var(--on-surface-variant);
+    font-size: 14px;
+}
+
+.contact-card-details dd {
+    color: var(--on-surface);
+    word-break: break-all;
+}
+
+@media (max-width: 1024px) {
+    .offering-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .offering-grid,
+    .contact-cards {
+        grid-template-columns: 1fr;
+    }
+
+    .contact-email {
+        font-size: 18px;
+    }
 }
 
 /* =========================================================
@@ -1815,56 +1905,6 @@ a.platform-card:hover {
     margin-bottom: 0;
 }
 
-/* ---------- 深蓝 CTA 通栏 ---------- */
-
-.cta-band {
-    padding-block: var(--section-gap);
-}
-
-.cta-band-inner {
-    position: relative;
-    overflow: hidden;
-    border-radius: var(--radius-xl);
-    padding: 64px 32px;
-    text-align: center;
-    background:
-        radial-gradient(600px 300px at 85% 120%, rgba(65, 190, 253, 0.25), transparent 70%),
-        var(--primary-container);
-    color: #fff;
-}
-
-.cta-band-inner h2 {
-    color: #fff;
-    font-size: 32px;
-    line-height: 1.25;
-    margin-bottom: 12px;
-}
-
-.cta-band-inner p {
-    color: rgba(255, 255, 255, 0.85);
-    max-width: 640px;
-    margin: 0 auto;
-}
-
-.cta-band-actions {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 32px;
-}
-
-.cta-button-onDark {
-    background: #fff;
-    color: var(--primary);
-    box-shadow: none;
-}
-
-.cta-button-onDark:hover {
-    background: var(--primary-fixed);
-    color: var(--primary);
-}
-
 /* ---------- 新生指南：公告行样式 ---------- */
 
 .guide-item a {
@@ -1931,14 +1971,6 @@ a.platform-card:hover {
 @media (max-width: 768px) {
     .page-header-inner {
         padding-block: 48px 36px;
-    }
-
-    .cta-band-inner {
-        padding: 40px 20px;
-    }
-
-    .cta-band-inner h2 {
-        font-size: 24px;
     }
 
     .guide-item a {
@@ -2275,18 +2307,3 @@ a.platform-card:hover {
     }
 }
 
-/* 联系方式：桌面端三栏平铺，读起来更整齐 */
-@media (min-width: 769px) {
-    .contact-list {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 24px;
-    }
-
-    .contact-list div {
-        align-items: flex-start;
-    }
-}
-
-.contact-card {
-    padding: 28px 32px;
-}

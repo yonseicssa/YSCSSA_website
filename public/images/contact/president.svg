@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 910 550" width="910" height="550" role="img">
+  <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0%" stop-color="#d7e3ff"/><stop offset="100%" stop-color="#e7e8ee"/>
+  </linearGradient></defs>
+  <rect width="910" height="550" fill="url(#g)"/>
+  <text x="455" y="270" text-anchor="middle" font-family="Montserrat, PingFang SC, sans-serif" font-size="44" font-weight="700" fill="#00234e" opacity="0.7">会长 · 회장</text>
+  <text x="455" y="330" text-anchor="middle" font-family="Inter, PingFang SC, sans-serif" font-size="24" fill="#00234e" opacity="0.45">名片占位图 · 待学联设计后替换</text>
+</svg>

@@ -92,6 +92,31 @@ export const pageSchema = z.object({
 
 export type PageEntry = ReturnType<typeof getPage>;
 
+/**
+ * 合作与赞助页在通用页面文案之外，还带一组「合作方式」卡片（PRD 4.5）。
+ * 分线上宣传与线下合作两组：这两类合作在赞助商一侧往往对应不同的
+ * 预算科目与决策人，分组可帮助对方快速定位。
+ */
+export const partnershipSchema = pageSchema.extend({
+  offerings: z
+    .array(
+      z.object({
+        group: z.enum(['online', 'offline']),
+        title: z.string(),
+        description: z.string()
+      })
+    )
+    .default([])
+});
+
+export type PartnershipEntry = ReturnType<typeof getPartnershipPage>;
+
+export function getPartnershipPage(lang: 'zh' | 'ko') {
+  const filePath = path.join('src/content/pages', lang, 'partnership.md');
+  const raw = fs.readFileSync(path.join(process.cwd(), filePath), 'utf8');
+  return parse(partnershipSchema, { id: `${lang}/partnership`, filePath, raw });
+}
+
 export function getPage(lang: 'zh' | 'ko', name: 'home' | 'about' | 'partnership') {
   const filePath = path.join('src/content/pages', lang, `${name}.md`);
   const raw = fs.readFileSync(path.join(process.cwd(), filePath), 'utf8');

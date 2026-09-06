@@ -55,9 +55,12 @@ export const ui = {
     'guide.back': '返回新生指南',
     'guide.empty': '暂无内容。',
 
-    'partnership.title': '合作与赞助',
-    'partnership.ctaTitle': '想与学联合作？',
-    'partnership.ctaBody': '来信请注明机构名称、合作形式与预计时间，我们会在收到后尽快回复。',
+    'partnership.ways': '合作方式',
+    'partnership.online': '线上宣传',
+    'partnership.offline': '线下合作',
+    'partnership.contact': '联系我们',
+    'partnership.email': '邮箱',
+    'partnership.wechat': '微信号',
 
     'notFound.title': '页面不存在',
     'notFound.body': '你访问的页面可能已被移动或删除。',
@@ -118,9 +121,12 @@ export const ui = {
     'guide.back': '가이드 목록으로',
     'guide.empty': '등록된 내용이 없습니다.',
 
-    'partnership.title': '협력 및 후원',
-    'partnership.ctaTitle': '연의회와 협력을 원하시나요?',
-    'partnership.ctaBody': '기관명, 협력 형태, 예정 시기를 함께 보내주시면 확인 후 신속히 회신드리겠습니다.',
+    'partnership.ways': '협력 방식',
+    'partnership.online': '온라인 홍보',
+    'partnership.offline': '오프라인 협력',
+    'partnership.contact': '연락처',
+    'partnership.email': '이메일',
+    'partnership.wechat': '위챗 ID',
 
     'notFound.title': '페이지를 찾을 수 없습니다',
     'notFound.body': '요청하신 페이지가 이동되었거나 삭제되었을 수 있습니다.',
