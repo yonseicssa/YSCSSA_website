@@ -67,7 +67,8 @@ export const guideSchema = z.object({
   title: z.string(),
   // URL 短名：英文小写加连字符，发布后不得修改（PRD 2.2 / 4.4）
   slug: z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, '短名只能使用小写英文、数字与连字符'),
-  summary: z.string().max(120),
+  // 60 字以内，用于列表页与搜索结果（PRD 4.4）
+  summary: z.string().max(60),
   weight: z.number().optional(),
   // 由后台保存时写入；网站优先显示 git 提交时间（见 lib/guides.ts）
   updated: z.coerce.date()
