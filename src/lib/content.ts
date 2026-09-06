@@ -50,10 +50,8 @@ export const eventSchema = z.object({
   location: z.string(),
   cover: z.string(),
   coverAlt: z.string(),
-  gallery: z.array(z.object({ src: z.string(), alt: z.string() })).default([]),
-  pinned: z.boolean().default(false),
-  // 置顶超过 3 条时按此时间取最近的 3 条（PRD 4.3 列表页）
-  pinnedAt: z.coerce.date().optional()
+  gallery: z.array(z.object({ src: z.string(), alt: z.string() })).default([])
+  // 不设「置顶」开关：主打活动全站唯一，在站点设置中指定（PRD 4.3）
 });
 
 export type EventEntry = ReturnType<typeof getEvents>[number];

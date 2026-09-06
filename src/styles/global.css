@@ -1314,11 +1314,6 @@ footer {
     display: block;
 }
 
-.chip-pinned {
-    top: 16px;
-    left: 16px;
-}
-
 .activity-content h3 a:hover {
     text-decoration: underline;
 }
@@ -1339,17 +1334,94 @@ footer {
     color: var(--on-surface-variant);
 }
 
-.pagination {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin-top: 48px;
+/* ---------- 主打活动横幅（PRD 4.3） ---------- */
+
+.featured-event {
+    margin-bottom: 48px;
 }
 
-.pagination-status {
-    color: var(--on-surface-variant);
-    font-size: 14px;
+.featured-event-link {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    align-items: stretch;
+    background: var(--surface-container-lowest);
+    border: 1px solid var(--surface-variant);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--ambient-shadow);
+    overflow: hidden;
+    color: inherit;
+    text-decoration: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.featured-event-link:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--raised-shadow);
+}
+
+.featured-event-media {
+    min-height: 280px;
+    background: var(--surface-container-low);
+}
+
+.featured-event-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.featured-event-body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+    padding: 32px;
+}
+
+.featured-event-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 8px;
+    padding: 4px 12px;
+    background: var(--primary-fixed);
+    border-radius: var(--radius-full);
+    color: var(--on-primary-fixed-variant);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+.featured-event-eyebrow .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: var(--radius-full);
+    background: var(--secondary-container);
+}
+
+.featured-event-title {
+    font-family: var(--font-display);
+    font-size: 28px;
+    line-height: 1.25;
+    color: var(--primary);
+}
+
+.featured-event-link:hover .featured-event-title {
+    text-decoration: underline;
+}
+
+/* ---------- 列表分组（PRD 4.3：「全部」分两组并带分组标题） ---------- */
+
+.events-group + .events-group {
+    margin-top: 56px;
+}
+
+.events-group-title {
+    font-family: var(--font-display);
+    font-size: 20px;
+    color: var(--primary);
+    margin-bottom: 24px;
 }
 
 /* ---------- 详情页 ---------- */
@@ -2010,6 +2082,23 @@ a.platform-card:hover {
     :root {
         --margin-desktop: 16px;
         --section-gap: 48px;
+    }
+
+    .featured-event-link {
+        grid-template-columns: 1fr;
+    }
+
+    .featured-event-media {
+        min-height: 0;
+        aspect-ratio: 16 / 9;
+    }
+
+    .featured-event-body {
+        padding: 24px;
+    }
+
+    .featured-event-title {
+        font-size: 22px;
     }
 
     .hero-intro h1,

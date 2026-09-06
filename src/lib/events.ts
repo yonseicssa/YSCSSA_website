@@ -1,9 +1,8 @@
 import type { EventEntry } from './content';
+import { settings } from './settings';
 
 export type { EventEntry };
 export type EventStatus = 'upcoming' | 'ended';
-
-const MAX_PINNED = 3;
 
 function ymd(date: Date): string {
   const y = date.getFullYear();
@@ -49,40 +48,12 @@ export function statusOf(event: EventEntry, now: Date = new Date()): EventStatus
   return effectiveEnd(event).getTime() > now.getTime() ? 'upcoming' : 'ended';
 }
 
-/** 置顶最多 3 条；超出时取最近置顶的 3 条，其余自动失效（PRD 4.3） */
-export function pinnedEvents(events: EventEntry[]): EventEntry[] {
-  return events
-    .filter((e) => e.data.pinned)
-    .sort((a, b) => {
-      const at = (a.data.pinnedAt ?? a.data.startDate).getTime();
-      const bt = (b.data.pinnedAt ?? b.data.startDate).getTime();
-      return bt - at;
-    })
-    .slice(0, MAX_PINNED);
-}
-
 /**
- * 列表页顺序：置顶（不参与分组）→ 即将举行（开始日期升序）→ 已结束（开始日期降序）
+ * 主打活动：全站唯一，在站点设置中指定，不做成每场活动的开关（PRD 4.3）。
+ * 设置项天然保证唯一性；指向的活动被删除时视为未设置，横幅整块隐藏。
  */
-export function orderedEvents(events: EventEntry[], now: Date = new Date()): EventEntry[] {
-  const pinned = pinnedEvents(events);
-  const pinnedIds = new Set(pinned.map((e) => e.id));
-  const rest = events.filter((e) => !pinnedIds.has(e.id));
-
-  const upcoming = rest
-    .filter((e) => statusOf(e, now) === 'upcoming')
-    .sort((a, b) => a.data.startDate.getTime() - b.data.startDate.getTime());
-  const ended = rest
-    .filter((e) => statusOf(e, now) === 'ended')
-    .sort((a, b) => b.data.startDate.getTime() - a.data.startDate.getTime());
-
-  return [...pinned, ...upcoming, ...ended];
-}
-
-/**
- * 首页固定 3 条的填充顺序（PRD 4.1）：
- * 置顶优先（最多 3 条）→ 即将举行按开始日期升序 → 不足时用已结束按开始日期降序补齐
- */
-export function homeEvents(events: EventEntry[], now: Date = new Date()): EventEntry[] {
-  return orderedEvents(events, now).slice(0, 3);
+export function featuredEvent(events: EventEntry[]): EventEntry | null {
+  const id = settings.featuredEvent?.trim();
+  if (!id) return null;
+  return events.find((event) => event.id === id) ?? null;
 }

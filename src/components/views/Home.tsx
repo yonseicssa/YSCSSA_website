@@ -1,16 +1,16 @@
 import Link from 'next/link';
 import Icon from '../Icon';
-import EventsGrid from '../EventsGrid';
+import HomeEvents from '../HomeEvents';
 import PlatformLinks from '../PlatformLinks';
 import { getEvents, getPage } from '@/lib/content';
-import { orderedCards } from '@/lib/cards';
+import { toCards } from '@/lib/cards';
 import { imageUrl } from '@/lib/images';
 import { settings } from '@/lib/settings';
 import { localePath, t, type Lang } from '@/i18n/ui';
 
 export default function Home({ lang }: { lang: Lang }) {
   const page = getPage(lang, 'home');
-  const cards = orderedCards(getEvents(), lang);
+  const cards = toCards(getEvents(), lang);
 
   return (
     <>
@@ -77,7 +77,7 @@ export default function Home({ lang }: { lang: Lang }) {
               </Link>
             </div>
 
-            <EventsGrid cards={cards} lang={lang} limit={3} />
+            <HomeEvents cards={cards} lang={lang} />
           </div>
         </section>
       )}
