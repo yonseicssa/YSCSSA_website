@@ -1,7 +1,7 @@
 ---
 lang: ko
-seoTitle: 소개 - 연세대학교 중국학생학자연의회
-seoDescription: 연세대학교 중국학생학자연의회의 역할, 활동, 조직 구성 및 연락처 안내.
+seoTitle: 소개
+seoDescription: 연세대학교 중국학생학자연의회의 역할, 활동, 조직 구성 안내.
 heading: 소개
 subheading: 단체의 역할과 조직 구성
 ---

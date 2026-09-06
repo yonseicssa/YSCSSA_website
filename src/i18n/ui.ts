@@ -32,9 +32,6 @@ export const ui = {
 
     'about.title': '关于我们',
     'about.org': '组织架构',
-    'about.contact': '联系方式',
-    'about.email': '公共邮箱',
-    'about.removalNotice': '如需撤下本页中与您有关的姓名或照片，请发送邮件至学联公共邮箱，我们会尽快处理。',
 
     'events.title': '活动',
     'events.featured': '主打活动',
@@ -98,10 +95,6 @@ export const ui = {
 
     'about.title': '소개',
     'about.org': '조직 구성',
-    'about.contact': '연락처',
-    'about.email': '공식 이메일',
-    'about.removalNotice':
-      '본 페이지에 게시된 성명 또는 사진의 삭제를 원하시는 경우 공식 이메일로 연락해 주시면 신속히 처리하겠습니다.',
 
     'events.title': '행사',
     'events.featured': '주요 행사',

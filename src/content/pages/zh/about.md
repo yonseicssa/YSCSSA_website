@@ -1,7 +1,7 @@
 ---
 lang: zh
-seoTitle: 关于我们 - 延世大学中国学生学者联谊会
-seoDescription: 延世大学中国学生学者联谊会的定位、职能、组织架构与联系方式。
+seoTitle: 关于我们
+seoDescription: 延世大学中国学生学者联谊会的定位、职能与组织架构。
 heading: 关于我们
 subheading: 学联的定位、职能与组织架构
 ---

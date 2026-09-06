@@ -3,6 +3,7 @@ import path from 'node:path';
 import matter from 'gray-matter';
 import { marked } from 'marked';
 import { z } from 'zod';
+import { iconNames } from '@/components/Icon';
 
 const CONTENT_DIR = path.join(process.cwd(), 'src/content');
 
@@ -99,21 +100,20 @@ export function getPage(lang: 'zh' | 'ko', name: 'home' | 'about' | 'partnership
 
 /* --------------------------- 组织架构（PRD 4.2） --------------------------- */
 
+/**
+ * 组织架构只呈现部门与小组结构：一期不展示成员姓名与照片（PRD 4.2）。
+ * 这同时消除了个人信息处理的合规要求，也使本页免于每次换届重做。
+ */
 export const departmentSchema = z.object({
   order: z.number().default(99),
+  // 会长团为通栏卡片，横跨页面宽度置于顶部；通栏形态本身即表达其位于上一层级（PRD 4.2）
+  leadership: z.boolean().default(false),
   name: z.object({ zh: z.string(), ko: z.string() }),
   description: z.object({ zh: z.string(), ko: z.string() }),
-  members: z
-    .array(
-      z.object({
-        name: z.string(), // 中文原文，不作转写（PRD 3.1）
-        role: z.object({ zh: z.string(), ko: z.string() }),
-        photo: z.string().optional(),
-        // 上线前须逐一取得本人同意并存档（PRD 4.2）
-        consent: z.boolean().default(false)
-      })
-    )
-    .default([])
+  // 部门可配图标，不使用照片：风格统一、体积小、无版权风险且不会过期（PRD 4.2）
+  icon: z.enum(iconNames).optional(),
+  // 小组的变动频率高于部门，须在后台可编辑，不得写死在代码中（PRD 4.2）
+  groups: z.array(z.object({ zh: z.string(), ko: z.string() })).default([])
 });
 
 export type DepartmentEntry = ReturnType<typeof getDepartments>[number];
