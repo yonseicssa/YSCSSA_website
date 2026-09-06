@@ -10,3 +10,4 @@ pnpm-debug.log*
 out/
 next-env.d.ts
 public/images/wallpaper/generated/
+tsconfig.tsbuildinfo
