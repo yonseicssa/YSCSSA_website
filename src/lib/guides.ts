@@ -1,4 +1,5 @@
 import type { GuideEntry } from './content';
+import { formatMonth, siteYearMonth } from './date';
 import gitUpdated from '../generated/git-updated.json';
 
 export type { GuideEntry };
@@ -26,9 +27,12 @@ export function orderedGuides(guides: GuideEntry[]): GuideEntry[] {
   });
 }
 
+/** 列表页要分开显示年与月，因此另给一个取分量的函数（同样按站点时区） */
+export function updatedParts(date: Date): [number, number] {
+  return siteYearMonth(date);
+}
+
 /** 对外只显示到月份（PRD 4.4） */
 export function updatedLabel(date: Date, lang: 'zh' | 'ko'): string {
-  const y = date.getFullYear();
-  const m = date.getMonth() + 1;
-  return lang === 'zh' ? `${y} 年 ${m} 月` : `${y}년 ${m}월`;
+  return formatMonth(date, lang);
 }

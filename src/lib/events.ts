@@ -1,15 +1,9 @@
 import type { EventEntry } from './content';
+import { endOfDayIfDateOnly, isoDate } from './date';
 import { settings } from './settings';
 
 export type { EventEntry };
 export type EventStatus = 'upcoming' | 'ended';
-
-function ymd(date: Date): string {
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, '0');
-  const d = String(date.getDate()).padStart(2, '0');
-  return `${y}-${m}-${d}`;
-}
 
 /**
  * 活动详情 URL 由系统按开始日期自动生成（PRD 2.2）。
@@ -18,7 +12,7 @@ function ymd(date: Date): string {
 export function buildSlugMap(events: EventEntry[]): Map<string, string> {
   const byDate = new Map<string, EventEntry[]>();
   for (const event of events) {
-    const key = ymd(event.data.startDate);
+    const key = isoDate(event.data.startDate);
     byDate.set(key, [...(byDate.get(key) ?? []), event]);
   }
 
@@ -33,15 +27,9 @@ export function buildSlugMap(events: EventEntry[]): Map<string, string> {
   return slugs;
 }
 
-/** 结束日期未填写时取开始日期（PRD 4.3 状态判定） */
+/** 结束日期未填写时取开始日期；只填到日期时视为当天结束（PRD 4.3 状态判定） */
 export function effectiveEnd(event: EventEntry): Date {
-  const end = event.data.endDate ?? event.data.startDate;
-  // 只填到日期时，视为当天 23:59:59 结束
-  const d = new Date(end);
-  if (d.getHours() === 0 && d.getMinutes() === 0 && d.getSeconds() === 0) {
-    d.setHours(23, 59, 59, 999);
-  }
-  return d;
+  return endOfDayIfDateOnly(new Date(event.data.endDate ?? event.data.startDate));
 }
 
 export function statusOf(event: EventEntry, now: Date = new Date()): EventStatus {

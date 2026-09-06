@@ -3,18 +3,19 @@ import GuideList, { type GuideListItem } from '../GuideList';
 import Icon from '../Icon';
 import PageHeader from '../PageHeader';
 import { getGuides } from '@/lib/content';
-import { effectiveUpdated, orderedGuides, updatedLabel } from '@/lib/guides';
+import { effectiveUpdated, orderedGuides, updatedLabel, updatedParts } from '@/lib/guides';
 import { localePath, t, type Lang } from '@/i18n/ui';
 
 export function guideItems(lang: Lang): GuideListItem[] {
   return orderedGuides(getGuides()).map((guide) => {
-    const updated = effectiveUpdated(guide);
+    // 年月同样按站点时区取，避免月末的更新在不同时区的构建机上显示成不同月份
+    const [year, month] = updatedParts(effectiveUpdated(guide));
     return {
       slug: guide.data.slug,
       title: guide.data.title,
       summary: guide.data.summary,
-      year: updated.getFullYear(),
-      monthLabel: lang === 'zh' ? `${updated.getMonth() + 1} 月` : `${updated.getMonth() + 1}월`
+      year,
+      monthLabel: lang === 'zh' ? `${month} 月` : `${month}월`
     };
   });
 }
