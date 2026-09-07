@@ -34,7 +34,6 @@ export default function EventCard({
           width={1600}
           height={900}
         />
-        {card.pinned && <span className="chip chip-accent chip-pinned">{t(lang, 'events.pinned')}</span>}
         <span className={`event-status chip-status status-${status}`}>
           {t(lang, ended ? 'events.ended' : 'events.upcoming')}
         </span>

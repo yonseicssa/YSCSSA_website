@@ -1,7 +1,6 @@
 import type { MetadataRoute } from 'next';
 import { getEvents, getGuides } from '@/lib/content';
 import { buildSlugMap } from '@/lib/events';
-import { eventPageCount } from '@/components/views/EventsList';
 import { localePath } from '@/i18n/ui';
 import { SITE_URL } from '@/lib/site';
 
@@ -19,7 +18,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     '/events',
     '/guide',
     '/partnership',
-    ...Array.from({ length: eventPageCount() - 1 }, (_, i) => `/events/page/${i + 2}`),
     ...events.map((event) => `/events/${slugs.get(event.id)!}`),
     ...getGuides().map((guide) => `/guide/${guide.data.slug}`)
   ];

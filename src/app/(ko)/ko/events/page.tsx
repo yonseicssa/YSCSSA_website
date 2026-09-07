@@ -12,5 +12,5 @@ export function generateMetadata() {
 }
 
 export default function Page() {
-  return <EventsList lang="ko" pageNum={1} />;
+  return <EventsList lang="ko" />;
 }

@@ -1,0 +1,18 @@
+{
+  "cards": [
+    {
+      "image": "/images/contact/president.svg",
+      "name": "",
+      "role": { "zh": "会长", "ko": "회장" },
+      "email": "president@yscssa.org",
+      "wechat": "yscssa-president"
+    },
+    {
+      "image": "/images/contact/cooperation.svg",
+      "name": "",
+      "role": { "zh": "合作交流部部长", "ko": "대외협력부장" },
+      "email": "partnership@yscssa.org",
+      "wechat": "yscssa-partnership"
+    }
+  ]
+}

@@ -2,6 +2,9 @@
 # 后台地址：https://<域名>/admin/
 # 登录方式：GitHub 账号（每人一个独立账号，PRD 5.1）
 #
+# 本文件的字段必须与 src/lib/content.ts 里的 schema 保持一致：
+# 内容格式不符时构建会直接失败，改动不会上线。
+#
 # 上线前需要改的地方：
 #   1. backend.repo 改成仓库的 owner/name
 #   2. 若托管在 Cloudflare Pages/自建，需要配置 GitHub OAuth 代理并填写 base_url
@@ -39,9 +42,18 @@ collections:
     public_folder: /images/events
     summary: '{{startDate | date("YYYY-MM-DD")}} · {{title}}'
     sortable_fields: [startDate, title]
+    # 没有「置顶」开关：主打活动全站唯一，在「全站设置」里指定（PRD 4.3）
     fields:
       - { name: title, label: 标题, widget: string, hint: 建议 20 字以内 }
-      - { name: startDate, label: 开始日期, widget: datetime, date_format: 'YYYY-MM-DD', time_format: false, picker_utc: false }
+      - {
+          name: startDate,
+          label: 开始日期,
+          widget: datetime,
+          date_format: 'YYYY-MM-DD',
+          time_format: false,
+          picker_utc: false,
+          hint: 网址由它自动生成，发布后不要再改
+        }
       - {
           name: endDate,
           label: 结束日期,
@@ -55,13 +67,13 @@ collections:
       - { name: location, label: 地点, widget: string }
       - { name: cover, label: 封面图, widget: image, hint: '16:9，压缩为 WebP，长边 1600px' }
       - { name: coverAlt, label: 封面图说明文字, widget: string, hint: 供读屏软件与搜索引擎使用，必填 }
-      - { name: pinned, label: 置顶, widget: boolean, default: false, required: false, hint: 最多同时置顶 3 条，超出的自动失效 }
-      - { name: pinnedAt, label: 置顶时间, widget: datetime, required: false, hint: 置顶超过 3 条时按此时间取最近的 3 条 }
       - name: gallery
         label: 图集
+        label_singular: 图片
         widget: list
         required: false
         summary: '{{fields.alt}}'
+        hint: 往届活动照片，显示在详情页正文下方
         fields:
           - { name: src, label: 图片, widget: image }
           - { name: alt, label: 图片说明文字, widget: string }
@@ -86,7 +98,13 @@ collections:
           pattern: ['^[a-z0-9]+(-[a-z0-9]+)*$', '只能使用小写英文、数字与连字符，例如 arc-application'],
           hint: 发布后不得修改；修改会导致外部引用失效
         }
-      - { name: summary, label: 摘要, widget: text, hint: 60 字以内，用于列表页与搜索结果 }
+      - {
+          name: summary,
+          label: 摘要,
+          widget: text,
+          pattern: ['^[\s\S]{1,60}$', '摘要不能超过 60 字'],
+          hint: 60 字以内，用于列表页与搜索结果
+        }
       - { name: weight, label: 排序权重, widget: number, required: false, value_type: int, hint: 数字越小越靠前；留空排在最后 }
       - {
           name: updated,
@@ -101,34 +119,90 @@ collections:
   - name: pages
     label: 页面文案
     files:
+      # 首页与其他页的标题规则不同：首页不会自动追加机构名，需填完整标题
       - name: home_zh
         label: 首页简介（中文）
         file: src/content/pages/zh/home.md
-        fields: &page_fields
+        fields: &home_fields
           - { name: lang, label: 语言, widget: hidden }
-          - { name: seoTitle, label: 浏览器标题（SEO）, widget: string }
+          - { name: seoTitle, label: 浏览器标题（SEO）, widget: string, hint: 首页请填完整标题，例如「延世大学中国学生学者联谊会 YSCSSA」 }
           - { name: seoDescription, label: 页面描述（SEO）, widget: text }
           - { name: heading, label: 标题, widget: string }
           - { name: subheading, label: 副标题, widget: string, required: false }
-          - { name: body, label: 正文, widget: markdown }
-      - { name: home_ko, label: 首页简介（韩语）, file: src/content/pages/ko/home.md, fields: *page_fields }
-      - { name: about_zh, label: 关于我们（中文）, file: src/content/pages/zh/about.md, fields: *page_fields }
-      - { name: about_ko, label: 关于我们（韩语）, file: src/content/pages/ko/about.md, fields: *page_fields }
-      - { name: partnership_zh, label: 合作与赞助（中文）, file: src/content/pages/zh/partnership.md, fields: *page_fields }
-      - { name: partnership_ko, label: 合作与赞助（韩语）, file: src/content/pages/ko/partnership.md, fields: *page_fields }
+          - { name: body, label: 正文, widget: markdown, hint: 二至三段，学联的定位与职能概述，比「关于我们」从简 }
+      - { name: home_ko, label: 首页简介（韩语）, file: src/content/pages/ko/home.md, fields: *home_fields }
+
+      - name: about_zh
+        label: 关于我们（中文）
+        file: src/content/pages/zh/about.md
+        fields: &about_fields
+          - { name: lang, label: 语言, widget: hidden }
+          - { name: seoTitle, label: 浏览器标题（SEO）, widget: string, hint: 只填页面名（如「关于我们」），机构全名由系统自动追加 }
+          - { name: seoDescription, label: 页面描述（SEO）, widget: text }
+          - { name: heading, label: 标题, widget: string }
+          - { name: subheading, label: 副标题, widget: string, required: false }
+          - { name: body, label: 正文, widget: markdown, hint: 三至四段，建议涵盖成立时间与背景、服务对象与规模、主要工作、与学校及相关机构的关系 }
+      - { name: about_ko, label: 关于我们（韩语）, file: src/content/pages/ko/about.md, fields: *about_fields }
+
+      - name: partnership_zh
+        label: 合作与赞助（中文）
+        file: src/content/pages/zh/partnership.md
+        fields: &partnership_fields
+          - { name: lang, label: 语言, widget: hidden }
+          - { name: seoTitle, label: 浏览器标题（SEO）, widget: string, hint: 只填页面名（如「合作与赞助」），机构全名由系统自动追加 }
+          - { name: seoDescription, label: 页面描述（SEO）, widget: text }
+          - { name: heading, label: 标题, widget: string }
+          - { name: subheading, label: 副标题, widget: string, required: false }
+          - {
+              name: body,
+              label: 开篇说明,
+              widget: markdown,
+              hint: 两至三句话，说明学联的受众与服务范围并引出合作意向。不要写各平台的粉丝数量，具体数据放对外提案材料
+            }
+          - name: offerings
+            label: 合作方式
+            label_singular: 一项合作方式
+            widget: list
+            summary: '{{fields.title}}'
+            hint: 线上宣传与线下合作各三项；每项一个标题加一行说明，文案须简短
+            fields:
+              - name: group
+                label: 分组
+                widget: select
+                options:
+                  - { label: 线上宣传, value: online }
+                  - { label: 线下合作, value: offline }
+              - { name: title, label: 标题, widget: string }
+              - { name: description, label: 一行说明, widget: string }
+      - { name: partnership_ko, label: 合作与赞助（韩语）, file: src/content/pages/ko/partnership.md, fields: *partnership_fields }
 
   # ---------------- 组织架构（PRD 4.2） ----------------
+  # 一期不展示成员姓名与照片，本页只呈现部门与小组结构。
+  # 部门结构相对稳定、人员每年更替，去掉人员信息后本页几乎无需维护。
   - name: departments
     label: 组织架构
     label_singular: 部门
     folder: src/content/departments
     create: true
-    media_folder: /public/images/members
-    public_folder: /images/members
     summary: '{{order}} · {{name.zh}}'
     sortable_fields: [order]
     fields:
-      - { name: order, label: 排序, widget: number, value_type: int, default: 99 }
+      - {
+          name: order,
+          label: 排序,
+          widget: number,
+          value_type: int,
+          default: 99,
+          hint: 数字越小越靠前。顺序按重要性决定，首位留给对外或统筹职能的部门
+        }
+      - {
+          name: leadership,
+          label: 会长团（通栏卡片）,
+          widget: boolean,
+          default: false,
+          required: false,
+          hint: 只有会长团打开。打开后这张卡片横跨页面宽度置于顶部，表示它位于上一层级
+        }
       - name: name
         label: 部门名称
         widget: object
@@ -138,30 +212,36 @@ collections:
       - name: description
         label: 职能描述
         widget: object
+        hint: 控制在两行以内。本页需全文翻译为韩语且会被韩国机构仔细阅读，文案越短越易保证翻译质量
         fields:
           - { name: zh, label: 中文, widget: text }
           - { name: ko, label: 韩语, widget: text }
-      - name: members
-        label: 成员
+      - name: icon
+        label: 图标
+        widget: select
+        required: false
+        hint: 部门用图标不用照片：风格统一、体积小、无版权风险且不会过期
+        options:
+          - { label: 团队, value: group }
+          - { label: 连接（对外合作）, value: link }
+          - { label: 图表（运营统筹）, value: chart }
+          - { label: 扩音器（宣传）, value: megaphone }
+          - { label: 日历（活动组织）, value: calendar }
+          - { label: 书（学术）, value: book }
+          - { label: 相机（影像）, value: camera }
+          - { label: 对话, value: chat }
+          - { label: 地球（对外交流）, value: globe }
+          - { label: 信封, value: mail }
+      - name: groups
+        label: 下属小组
+        label_singular: 小组
         widget: list
         required: false
-        summary: '{{fields.name}}（{{fields.role.zh}}）'
+        summary: '{{fields.zh}}'
+        hint: 小组名称原则上不附职能说明，避免卡片显著变长
         fields:
-          - { name: name, label: 姓名, widget: string, hint: 中文原文，不作转写 }
-          - name: role
-            label: 职位
-            widget: object
-            fields:
-              - { name: zh, label: 中文, widget: string }
-              - { name: ko, label: 韩语, widget: string }
-          - { name: photo, label: 照片, widget: image, required: false, hint: '正方形 800×800，WebP，不超过 80KB' }
-          - {
-              name: consent,
-              label: 已取得本人同意,
-              widget: boolean,
-              default: false,
-              hint: 未勾选的成员不会显示在网站上。取得同意的聊天记录须截图存档。
-            }
+          - { name: zh, label: 中文, widget: string }
+          - { name: ko, label: 韩语, widget: string }
       - { name: body, label: 备注, widget: markdown, required: false }
 
   # ---------------- 全站设置 ----------------
@@ -169,13 +249,73 @@ collections:
     label: 全站设置
     files:
       - name: site
-        label: 壁纸与平台入口
+        label: 壁纸、主打活动与平台入口
         file: src/content/settings/site.json
         fields:
-          - { name: email, label: 公共邮箱, widget: string }
-          - { name: wallpaper, label: 首页壁纸, widget: image, hint: 上传学联自行拍摄或已获授权的照片 }
-          - { name: wallpaperAlt, label: 壁纸说明文字, widget: string }
+          - { name: email, label: 公共邮箱, widget: string, hint: 使用域名邮箱，转发至现任者的私人邮箱 }
+          - {
+              name: featuredEvent,
+              label: 主打活动,
+              widget: relation,
+              collection: events,
+              value_field: '{{slug}}',
+              search_fields: [title],
+              display_fields: [title],
+              required: false,
+              hint: 显示在活动页顶部的通栏横幅。全站只能有一场；活动结束后不会自动下架，需在此手动更换。留空则整个横幅隐藏
+            }
+          - {
+              name: wallpaper,
+              label: 首页壁纸,
+              widget: image,
+              media_folder: /public/images/wallpaper,
+              public_folder: /images/wallpaper,
+              hint: 上传一张原图即可，桌面与移动两种尺寸由系统自动生成。图片须为学联自行拍摄或持有明确授权。若原图细节过密压不到规定体积，构建会失败并提示更换
+            }
+          - { name: wallpaperAlt, label: 壁纸说明文字, widget: string, hint: 供读屏软件与搜索引擎使用，必填 }
           - { name: xiaohongshu, label: 小红书主页链接, widget: string }
           - { name: instagram, label: Instagram 主页链接, widget: string }
-          - { name: wechatQr, label: 微信公众号二维码, widget: image }
+          - {
+              name: wechatQr,
+              label: 微信公众号二维码,
+              widget: image,
+              media_folder: /public/images/platforms,
+              public_folder: /images/platforms,
+              hint: 公众号无法通过网页链接跳转，因此以二维码呈现
+            }
           - { name: wechatName, label: 微信公众号名称, widget: string }
+
+      - name: contact
+        label: 名片（合作与赞助页）
+        file: src/content/settings/contact.json
+        fields:
+          - name: cards
+            label: 名片
+            label_singular: 名片
+            widget: list
+            summary: '{{fields.role.zh}}'
+            hint: 两张：会长与合作交流部部长
+            fields:
+              - {
+                  name: image,
+                  label: 名片图片,
+                  widget: image,
+                  media_folder: /public/images/contact,
+                  public_folder: /images/contact,
+                  hint: 全站只有一版，图片本身同时包含中文与韩文，不随页面语言切换
+                }
+              - { name: name, label: 姓名, widget: string, required: false, hint: 用于名片图片的说明文字（alt）；留空则只写职务 }
+              - name: role
+                label: 职务
+                widget: object
+                hint: 随页面语言切换
+                fields:
+                  - { name: zh, label: 中文, widget: string }
+                  - { name: ko, label: 韩语, widget: string }
+              - {
+                  name: email,
+                  label: 邮箱,
+                  widget: string,
+                  hint: 必须使用域名邮箱，转发至现任者的私人邮箱。换届时只改转发目标，页面无需改动
+                }
+              - { name: wechat, label: 微信号, widget: string, hint: 建议使用学联专用账号而非个人微信，随换届一并移交 }

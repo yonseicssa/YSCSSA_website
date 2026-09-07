@@ -4,8 +4,6 @@ startDate: 2026-09-25
 location: 延世大学新村校区（具体场地待通知）
 cover: /images/events/welcome-party.svg
 coverAlt: 迎新晚会封面占位图，待替换为活动实拍照片
-pinned: true
-pinnedAt: 2026-09-01
 gallery: []
 ---
 

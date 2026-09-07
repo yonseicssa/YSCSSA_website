@@ -1,16 +1,17 @@
 import Link from 'next/link';
 import Icon from '../Icon';
-import EventsGrid from '../EventsGrid';
+import HomeEvents from '../HomeEvents';
 import PlatformLinks from '../PlatformLinks';
 import { getEvents, getPage } from '@/lib/content';
-import { orderedCards } from '@/lib/cards';
+import { toCards } from '@/lib/cards';
 import { imageUrl } from '@/lib/images';
 import { settings } from '@/lib/settings';
+import { wallpaper } from '@/lib/wallpaper';
 import { localePath, t, type Lang } from '@/i18n/ui';
 
 export default function Home({ lang }: { lang: Lang }) {
   const page = getPage(lang, 'home');
-  const cards = orderedCards(getEvents(), lang);
+  const cards = toCards(getEvents(), lang);
 
   return (
     <>
@@ -51,16 +52,25 @@ export default function Home({ lang }: { lang: Lang }) {
         </div>
       </section>
 
-      {/* 壁纸：全宽静态图片，无轮播、无文字叠加（PRD 4.1） */}
+      {/*
+        壁纸：全宽静态图片，无轮播、无文字叠加（PRD 4.1）。
+        桌面与移动两种尺寸由构建从同一张原图生成，浏览器按屏幕宽度自动选择；
+        编辑在后台只需上传一张原图，不必自己压缩或切尺寸。
+      */}
       <section className="wallpaper">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={imageUrl(settings.wallpaper)}
-          alt={settings.wallpaperAlt}
-          width={2400}
-          height={1000}
-          fetchPriority="high"
-        />
+        <picture>
+          {wallpaper.mobile && (
+            <source media="(max-width: 768px)" srcSet={imageUrl(wallpaper.mobile)} type="image/webp" />
+          )}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={imageUrl(wallpaper.desktop)}
+            alt={settings.wallpaperAlt}
+            width={wallpaper.width ?? undefined}
+            height={wallpaper.height ?? undefined}
+            fetchPriority="high"
+          />
+        </picture>
       </section>
 
       {/* 近期活动：一条都没有时整个区块隐藏（PRD 4.1） */}
@@ -77,7 +87,7 @@ export default function Home({ lang }: { lang: Lang }) {
               </Link>
             </div>
 
-            <EventsGrid cards={cards} lang={lang} limit={3} />
+            <HomeEvents cards={cards} lang={lang} />
           </div>
         </section>
       )}
